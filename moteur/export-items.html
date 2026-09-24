@@ -1,0 +1,5 @@
+<!doctype html><html><head><meta charset="utf-8"></head><body><pre id="out"></pre>
+<script src="relief.js"></script><script src="helpers.js"></script><script src="stalls.js"></script><script src="props.js"></script><script src="weapons.js"></script><script src="armory.js"></script><script src="props-strange.js"></script><script src="items.js"></script><script>
+const out = {}; for (const n of Items.ORDER) out[Items.I[n].cat + '/' + Items.I[n].name.trim()] = Items.render(n).toDataURL('image/png');
+document.getElementById('out').textContent = JSON.stringify(out); document.title = 'done';
+</script></body></html>

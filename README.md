@@ -21,6 +21,12 @@ Eraser (7 types de boutique dans `lib/shop-schema.ts`) : à ajouter.
   Code : `moteur/armory.js` (+ `weapons.js`), aperçu `moteur/armory.html`
   (`?only=Katana|Lance&size=300&cols=2`), export PNG : `moteur/export-armory.html`.
 
+- `icones/objets/` : 49 objets, PNG 512 × 512 fond transparent, rangés par famille
+  (`ecrits`, `equipement`, `ingredients`, `alchimie`, `divers`). Planche : `planches/objets-1.png`.
+  Code : `moteur/items.js`, aperçu `moteur/items.html`, export PNG : `moteur/export-items.html`.
+  Libellés en double dans la liste d'origine, dessinés en deux variantes : Autre (équipement /
+  ingrédients), Nourriture (ingrédients / alchimie), Survit / Survie, Outil / Outils, Décoratif / Décoration.
+
 ## Le moteur (`moteur/`)
 Tout tourne dans un navigateur, en canvas 512 × 512, sans dépendance.
 - `relief.js` : moteur de relief (albédo, hauteur, matière, lumières, ombres portées,

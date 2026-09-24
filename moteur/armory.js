@@ -353,5 +353,5 @@
     for (const [x, y, zz, col] of spec.lights || []) lights.push({ pos: [x, y, zz], radius: 200, color: col });
     return render(L, { seed: name.length, lights, room: [0.26, 0.23, 0.19], inside: () => false, sheen: 0.4, lichen: 0, wear: 0.3, dropShadow: 0.6 });
   }
-  root.Armory = { W, ORDER, render: renderWeapon };
+  root.Armory = { W, ORDER, render: renderWeapon, kit: { F, steel, metal, wood, cloth, glow, orb, spike, wrap, shaft, star, IRON, STEEL, BRASS, GOLD, mix, shade } };
 }(window));
