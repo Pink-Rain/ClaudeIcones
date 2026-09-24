@@ -1,0 +1,19 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{background:#121014;margin:0;padding:18px;font:600 15px Georgia,serif;color:#e6d8bd;width:1320px}
+h1{font-size:24px;margin:0 0 12px;letter-spacing:.02em}.grid{display:grid;grid-template-columns:repeat(4,315px);gap:16px 14px}
+figure{margin:0;text-align:center}canvas{width:300px;height:300px}figcaption{margin-top:2px}
+</style></head><body><h1 id="h">Cadres épiques — labo</h1><div class="grid" id="g"></div>
+<script src="relief.js"></script><script src="helpers.js"></script><script src="frames.js"></script><script src="frames-1.js"></script><script src="frames-2.js"></script><script src="frames-3.js"></script><script src="frames-4.js"></script><script src="frames-5.js"></script><script src="frames-6.js"></script><script src="portrait-data.js"></script><script src="portrait.js"></script><script>
+const q = new URLSearchParams(location.search);
+if (q.get("big")) document.head.insertAdjacentHTML("beforeend", "<style>.grid{grid-template-columns:repeat(2,530px)}canvas{width:512px;height:512px}body{width:1100px}</style>");
+if (q.get("title")) document.getElementById('h').textContent = q.get("title");
+if (q.get("cols")) { const n = +q.get("cols"), z = +(q.get("size") || 250); document.head.insertAdjacentHTML("beforeend", `<style>.grid{grid-template-columns:repeat(${n},${z + 12}px)}canvas{width:${z}px;height:${z}px}body{width:${n * (z + 26) + 20}px}figcaption{font-size:13px}</style>`); }
+const only = q.get('only'); if (q.get('o')) window.LabOverride = JSON.parse(q.get('o'));
+loadPortrait().then((img) => {
+  const t0 = performance.now();
+  EpicLab.frames.forEach((f, i) => { if (only && !only.split(',').includes(f.id)) return; const fig = document.createElement('figure'); let cv;
+    try { cv = EpicLab.renderFrame(f.id, img); } catch (e) { cv = document.createElement('canvas'); cv.width = cv.height = 512; const x = cv.getContext('2d'); x.fillStyle = '#f66'; x.font = '20px sans-serif'; x.fillText('ERREUR ' + f.id + ' : ' + e.message, 10, 256); console.error(e); }
+    fig.append(cv); const cap = document.createElement('figcaption'); cap.textContent = (i + 1) + '. ' + f.name; fig.append(cap); document.getElementById('g').append(fig); });
+  document.title = 'done ' + Math.round(performance.now() - t0) + 'ms';
+});
+</script></body></html>

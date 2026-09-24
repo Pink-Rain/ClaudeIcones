@@ -1,0 +1,36 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{background:#121014;margin:0;padding:18px;font:600 15px Georgia,serif;color:#e6d8bd}
+h1{font-size:24px;margin:0 0 4px}p.sub{margin:0 0 10px;color:#cdb98f;font-size:15px}h2{font-size:17px;margin:12px 0 8px;color:#cdb98f}
+.grid{display:grid;gap:12px}figure{margin:0;text-align:center}figcaption{font-size:13px;margin-top:2px}
+</style></head><body><h1 id="h"></h1><p class="sub" id="s"></p><div id="root"></div>
+<script src="relief.js"></script><script src="helpers.js"></script><script src="stalls.js"></script><script src="props.js"></script><script src="props-strange.js"></script><script src="shops2.js"></script><script src="shops3.js"></script><script src="backdrops.js"></script><script src="portrait-data.js"></script><script src="portrait.js"></script><script>
+const q = new URLSearchParams(location.search); const size = +(q.get('size') || 250); const cols = +(q.get('cols') || 5);
+document.head.insertAdjacentHTML('beforeend', `<style>.grid{grid-template-columns:repeat(${cols},${size}px)}canvas{width:${size}px;height:${size}px}</style>`);
+const FR = [['1', 'Pack 1'], ['vitrine', 'Vitrine'], ['enseigne', 'Enseigne'], ['auvent', 'Auvent'], ['porte', 'Porte']];
+const LAB = { market: 'Marché', bookshop: 'Librairie', antique: 'Antiquaire', armory: 'Armurerie', 'black-market': 'Marché noir', alchemist: 'Alchimiste', tavern: 'Taverne', traveling: 'Marché ambulant' };
+const PRESETS = {
+  ambulant: { title: 'Marché ambulant — DA étrange', sub: 'Laiton terni, aubergine écaillée, symboles à l’os, flammes vertes, corbeau, boule de cristal. Toujours des roues.', rows: [['', FR.map(([f, l]) => ({ f, shop: 'traveling', bg: null, label: l }))]] },
+  situation: { title: 'Fonds sans PNJ — en situation', sub: 'Le même fond dans les cinq contours (A = intérieur, B = objet phare).', rows: ['bookshop', 'traveling'].flatMap((shop) => [[`${LAB[shop]} · A · Intérieur`, FR.map(([f, l]) => ({ f, shop, bg: 'A', label: l }))], [`${LAB[shop]} · B · Objet phare`, FR.map(([f, l]) => ({ f, shop, bg: 'B', label: l }))]]) },
+};
+const P = PRESETS[q.get('preset') || 'ambulant'];
+document.getElementById('h').textContent = P.title; document.getElementById('s').textContent = P.sub;
+const PO = { fit: true, focus: [0.5, 0.5], filter: 'saturate(0.95)', vignette: 0.5 }; const cache = {};
+const back = (shop, bg) => (cache[shop + bg] = cache[shop + bg] || Backdrops.render(shop, bg));
+loadPortrait().then((img) => {
+  const root = document.getElementById('root');
+  for (const [title, cells] of P.rows) {
+    if (title) { const h = document.createElement('h2'); h.textContent = title; root.append(h); }
+    const g = document.createElement('div'); g.className = 'grid'; root.append(g);
+    for (const c of cells) {
+      const fig = document.createElement('figure'); let cv;
+      try {
+        const pic = c.bg ? back(c.shop, c.bg) : img; const po = c.bg ? PO : undefined;
+        if (c.f === '1') cv = ShopPack1.render(c.shop, pic, po);
+        else cv = ShopPack2.render(ShopPack2.items.find((it) => it.id === `${c.f}-${c.shop}`), pic, po);
+      } catch (e) { cv = document.createElement('canvas'); cv.width = cv.height = 512; document.body.insertAdjacentHTML('beforeend', '<pre class="err">' + e.stack + '</pre>'); }
+      fig.append(cv); const cap = document.createElement('figcaption'); cap.textContent = c.label; fig.append(cap); g.append(fig);
+    }
+  }
+  document.title = 'done';
+});
+</script></body></html>

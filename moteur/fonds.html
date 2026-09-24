@@ -1,0 +1,21 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{background:#121014;margin:0;padding:18px;font:600 15px Georgia,serif;color:#e6d8bd;width:1320px}
+h1{font-size:24px;margin:0 0 4px}p.sub{margin:0 0 12px;color:#cdb98f}.grid{display:grid;grid-template-columns:repeat(4,315px);gap:14px}
+figure{margin:0;text-align:center}canvas{width:300px;height:300px}
+</style></head><body><h1 id="h">Fonds sans PNJ — A · Intérieur</h1><p class="sub" id="s">Le fond qui remplace la couleur unie et l’emoji quand aucun PNJ n’est lié au token ; il se glisse dans tous les contours.</p><div class="grid" id="g"></div>
+<script src="relief.js"></script><script src="helpers.js"></script><script src="stalls.js"></script><script src="props.js"></script><script src="props-strange.js"></script><script src="backdrops.js"></script><script>
+const q = new URLSearchParams(location.search); if (q.get('title')) document.getElementById('h').textContent = q.get('title');
+const SHOPS = [['market', 'Marché'], ['bookshop', 'Librairie'], ['antique', 'Antiquaire'], ['armory', 'Armurerie'], ['black-market', 'Marché noir'], ['alchemist', 'Alchimiste'], ['tavern', 'Taverne'], ['traveling', 'Marché ambulant']];
+const g = document.getElementById('g');
+for (const [shop, label] of SHOPS) {
+  const fig = document.createElement('figure'); let cv;
+  try {
+    const bg = Backdrops.render(shop, 'A');
+    cv = Relief.portraitCanvas(bg, 238, { focus: [0.5, 0.5], zoom: 256 / 238, filter: 'saturate(0.95)', vignette: 0.45 });
+    const x = cv.getContext('2d'); x.lineWidth = 6; x.strokeStyle = '#1a1410'; x.beginPath(); x.arc(256, 256, 238, 0, Math.PI * 2); x.stroke();
+    x.lineWidth = 1.5; x.strokeStyle = 'rgba(210,190,150,0.45)'; x.beginPath(); x.arc(256, 256, 242, 0, Math.PI * 2); x.stroke();
+  } catch (e) { cv = document.createElement('canvas'); cv.width = cv.height = 512; document.body.insertAdjacentHTML('beforeend', '<pre class="err">' + e.stack + '</pre>'); }
+  fig.append(cv); const c = document.createElement('figcaption'); c.textContent = label; fig.append(c); g.append(fig);
+}
+document.title = 'done';
+</script></body></html>

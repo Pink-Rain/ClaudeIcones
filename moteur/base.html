@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{background:#121014;margin:0;padding:18px;font:600 15px Georgia,serif;color:#e6d8bd;width:1320px}
+h1{font-size:24px;margin:0 0 12px}.row{display:grid;grid-template-columns:110px repeat(4,290px);gap:10px;align-items:center;margin-bottom:6px}
+.lab{font-size:18px;color:#cdb98f}.head{text-align:center;color:#cdb98f}figure{margin:0;text-align:center}canvas{width:280px;height:280px}
+</style></head><body><h1 id="h">Tokens de base — anneau fin, cinq finitions, quatre états</h1><div id="g"></div>
+<script src="relief.js"></script><script src="helpers.js"></script><script src="base.js"></script><script src="portrait-data.js"></script><script src="portrait.js"></script><script>
+const q = new URLSearchParams(location.search); const only = q.get('only'); if (q.get('title')) document.getElementById('h').textContent = q.get('title');
+if (q.get('size')) { const z = +q.get('size'); document.head.insertAdjacentHTML('beforeend', `<style>.row{grid-template-columns:130px repeat(4,${z + 10}px)}canvas{width:${z}px;height:${z}px}body{width:${150 + 4 * (z + 20)}px}</style>`); }
+loadPortrait().then((img) => {
+  const g = document.getElementById('g');
+  const head = document.createElement('div'); head.className = 'row'; head.innerHTML = '<div></div>' + BaseLab.STATES.map((s) => `<div class="head">${s.label}</div>`).join(''); g.append(head);
+  for (const mk of Object.keys(BaseLab.MATERIALS)) {
+    if (only && !only.split(',').includes(mk)) continue;
+    const row = document.createElement('div'); row.className = 'row'; row.innerHTML = `<div class="lab">${BaseLab.MATERIALS[mk].label}</div>`;
+    BaseLab.STATES.forEach((s, lvl) => { const fig = document.createElement('figure'); let cv; try { cv = BaseLab.renderBase(mk, lvl, img); } catch (e) { cv = document.createElement('canvas'); cv.width = cv.height = 512; const x = cv.getContext('2d'); x.fillStyle = '#f66'; x.font = '20px sans-serif'; x.fillText('ERREUR ' + e.message, 10, 256); } fig.append(cv); row.append(fig); });
+    g.append(row);
+  }
+  document.title = 'done';
+});
+</script></body></html>

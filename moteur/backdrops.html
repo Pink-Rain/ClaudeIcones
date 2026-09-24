@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{background:#121014;margin:0;padding:14px;font:600 14px Georgia,serif;color:#e6d8bd;width:1340px}
+.grid{display:grid;grid-template-columns:repeat(4,320px);gap:12px}figure{margin:0;text-align:center}canvas{width:320px;height:320px}h2{margin:8px 0}
+</style></head><body><div id="root"></div>
+<script src="relief.js"></script><script src="helpers.js"></script><script src="stalls.js"></script><script src="props.js"></script><script src="props-strange.js"></script><script src="backdrops.js"></script><script>
+const q = new URLSearchParams(location.search); const styles = (q.get('style') || 'A,B').split(','); const only = q.get('only');
+const SHOPS = ['market', 'bookshop', 'antique', 'armory', 'black-market', 'alchemist', 'tavern', 'traveling'];
+const root = document.getElementById('root');
+for (const st of styles) {
+  const h = document.createElement('h2'); h.textContent = st === 'A' ? 'A · Intérieur' : 'B · Objet phare'; root.append(h);
+  const g = document.createElement('div'); g.className = 'grid'; root.append(g);
+  for (const shop of SHOPS) {
+    if (only && !only.split(',').includes(shop)) continue;
+    const fig = document.createElement('figure'); let cv;
+    try { cv = Backdrops.render(shop, st); } catch (e) { cv = document.createElement('canvas'); cv.width = cv.height = 512; document.body.insertAdjacentHTML('beforeend', '<pre class="err">' + shop + ' ' + st + ' ' + e.stack + '</pre>'); }
+    fig.append(cv); const c = document.createElement('figcaption'); c.textContent = shop; fig.append(c); g.append(fig);
+  }
+}
+document.title = 'done';
+</script></body></html>

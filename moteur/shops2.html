@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{background:#121014;margin:0;padding:18px;font:600 15px Georgia,serif;color:#e6d8bd;width:1320px}
+h1{font-size:24px;margin:0 0 6px}h2{font-size:18px;margin:14px 0 8px;color:#cdb98f}.grid{display:grid;grid-template-columns:repeat(4,315px);gap:14px}
+figure{margin:0;text-align:center}canvas{width:300px;height:300px}
+</style></head><body><h1 id="h">Boutiques rondes</h1><div id="packs"></div>
+<script src="relief.js"></script><script src="helpers.js"></script><script src="stalls.js"></script><script src="props.js"></script><script src="props-strange.js"></script><script src="shops2.js"></script><script src="shops3.js"></script><script src="backdrops.js"></script><script src="portrait-data.js"></script><script src="portrait.js"></script><script>
+const q = new URLSearchParams(location.search); const pack = q.get('pack') || '1,2'; const only = q.get('only');
+if (q.get("big")) document.head.insertAdjacentHTML("beforeend", "<style>.grid{grid-template-columns:repeat(2,530px)}canvas{width:512px;height:512px}body{width:1100px}</style>");
+if (q.get("title")) document.getElementById('h').textContent = q.get("title");
+loadPortrait().then((img) => {
+  const root = document.getElementById('packs');
+  const section = (title) => { const h = document.createElement('h2'); h.textContent = title; root.append(h); const g = document.createElement('div'); g.className = 'grid'; root.append(g); return g; };
+  const put = (g, label, fn) => { const fig = document.createElement('figure'); let cv; try { cv = fn(); } catch (e) { cv = document.createElement('canvas'); cv.width = cv.height = 512; const x = cv.getContext('2d'); x.fillStyle = '#f66'; x.font = '20px sans-serif'; x.fillText('ERREUR ' + e.message, 10, 256); console.error(e); document.body.insertAdjacentHTML('beforeend', '<pre class=err>' + e.stack + '</pre>'); } fig.append(cv); const c = document.createElement('figcaption'); c.textContent = label; fig.append(c); g.append(fig); };
+  const bg = q.get('bg'); const cache = {}; const PO = { fit: true, focus: [0.5, 0.5], filter: 'saturate(0.95)', vignette: 0.5 };
+  const back = (shop) => (cache[shop] = cache[shop] || Backdrops.render(shop, bg));
+  if (pack.includes('1')) { const g = section(q.get('sub1') || 'Pack 1 — objets entassés'); ShopPack1.types.forEach((t) => { if (only && !only.split(',').includes(t)) return; put(g, ShopPack1.label(t), () => bg ? ShopPack1.render(t, back(t), PO) : ShopPack1.render(t, img)); }); }
+  if (pack.includes('2') && window.ShopPack2) { const g = section(q.get('sub') || 'Pack 2 — idées libres'); ShopPack2.items.forEach((it) => { if (only && !only.split(',').includes(it.id)) return; if (q.get('concept') && it.concept !== q.get('concept')) return; put(g, it.name, () => bg ? ShopPack2.render(it, back(it.shop), PO) : ShopPack2.render(it, img)); }); }
+  document.title = 'done';
+});
+</script></body></html>

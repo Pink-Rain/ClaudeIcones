@@ -1,0 +1,12 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{background:#121014;margin:0;padding:8px;display:grid;grid-template-columns:repeat(2,512px);gap:8px}canvas{width:512px;height:512px}</style></head><body>
+<script src="relief.js"></script><script src="helpers.js"></script><script src="frames.js"></script><script src="frames-1.js"></script><script src="frames-2.js"></script><script src="frames-3.js"></script><script src="frames-4.js"></script><script src="frames-5.js"></script><script src="frames-6.js"></script><script src="portrait-data.js"></script><script src="portrait.js"></script><script>
+const q = new URLSearchParams(location.search);
+const ids = q.get('ids').split(','); const [zx, zy, zs] = (q.get('z') || '0,0,256').split(',').map(Number);
+loadPortrait().then((img) => {
+  for (const id of ids) {
+    const full = EpicLab.renderFrame(id, img);
+    const c = document.createElement('canvas'); c.width = c.height = 512; const x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(full, zx, zy, zs, zs, 0, 0, 512, 512); document.body.append(c);
+  }
+  document.title = 'done';
+});
+</script></body></html>

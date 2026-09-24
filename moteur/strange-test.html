@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{background:#121014;margin:0;padding:8px}canvas{width:1024px;height:1024px}</style></head><body>
+<script src="relief.js"></script><script src="helpers.js"></script><script src="stalls.js"></script><script src="props.js"></script><script src="props-strange.js"></script><script>
+try {
+const { createLayers, render, compose } = Relief; const S = Strange; const Pr = Props;
+const L = createLayers();
+L.fill((ctx) => { ctx.beginPath(); ctx.rect(0, 0, 512, 512); }, { albedo: '#3a3430', height: 0.1, kind: 'wood', rough: 0.8 });
+S.crow(L, 110, 170, 1.5, false, 0.3);
+S.birdcage(L, 300, 10, 1.25, 0.3);
+S.crystalBall(L, 70, 490, 40, 0.3);
+S.eyeJar(L, 175, 490, 1.3, 0.3);
+S.tarotFan(L, 290, 492, 1.25, 0, 0.3);
+S.skullCandle(L, 430, 494, 1.1, 0.3);
+S.charmString(L, 10, 250, 500, 250, 26, ['bone', 'key', 'skull', 'feather', 'bell', 'rag', 'vial', 'tooth', 'rag', 'bone', 'key', 'feather'], 0.4);
+for (const [t, x] of [['eye', 60], ['moon', 120], ['star', 170], ['eye', 230]]) S.paintSymbol(L, t, x, 340, 1.6, 0, 0.14);
+S.greenLantern(L, 460, 150, 1, 0.3);
+const lit = render(L, { seed: 3, lights: [{ dir: [-0.45, -0.62, 0.64], color: [1.3, 1.2, 1.0] }, { dir: [0.7, 0.45, 0.5], color: [0.14, 0.16, 0.26], shadow: false }, { pos: [460, 140, 60], radius: 160, color: [0.5, 1.2, 0.7] }], room: [0.24, 0.21, 0.17], inside: () => false, sheen: 0.35 });
+document.body.append(compose({ frame: lit, opening: 1 }));
+} catch (e) { document.body.insertAdjacentHTML('beforeend', '<pre class="err">' + e.stack + '</pre>'); }
+document.title = 'done';
+</script></body></html>

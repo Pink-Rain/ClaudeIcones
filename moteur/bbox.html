@@ -1,0 +1,13 @@
+<!doctype html><html><head><meta charset="utf-8"></head><body><pre id="out"></pre>
+<script src="relief.js"></script><script src="helpers.js"></script><script src="stalls.js"></script><script src="props.js"></script><script src="props-strange.js"></script><script src="shops2.js"></script><script>
+const { createLayers } = Relief; const out = []; const Pr = window.Props;
+const measure = (L) => { const c = L.a.canvas; const d = L.a.getImageData(0, 0, c.width, c.height).data; let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1; for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) if (d[(y * c.width + x) * 4 + 3] > 8) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; } return [x0, y0, x1, y1]; };
+const wrapNames = ['scroll','book','candle','inkwell','sack','cheese','basket','apple','grapes','bread','amphora','hourglass','casket','coinPile','sword','axe','heaterShield','greatHelm','crown','pouch','coinStack','flask','dagger','herbs','crystals','mortar','barrel','wineBottle','tankard','drumstick','bindle','backpack','blanketRoll','pan','pot','lantern','bells','horseshoe'];
+let current = null;
+const wrapS = ['crystalBall','eyeJar','greenLantern','charmString','crow','birdcage','tarotFan','skullCandle'];
+for (const n of wrapS) { const orig = Strange[n]; Strange[n] = function (L, ...args) { if (current) { const L2 = createLayers(); orig(L2, ...args); const b = measure(L2); const edge = (b[0] <= 1 || b[1] <= 1 || b[2] >= 510 || b[3] >= 510) ? '  <-- EDGE' : ''; out.push(`  S.${n}(${args.slice(0, 3).map((v) => typeof v === 'number' ? Math.round(v) : typeof v).join(',')}) bbox ${b.join(',')}${edge}`); } return orig(L, ...args); }; }
+for (const n of wrapNames) { const orig = Pr[n]; Pr[n] = function (L, ...args) { if (current) { const L2 = createLayers(); orig(L2, ...args); const b = measure(L2); const edge = (b[0] <= 1 || b[1] <= 1 || b[2] >= 510 || b[3] >= 510) ? '  <-- EDGE' : ''; out.push(`  ${n}(${args.slice(0, 3).map((v) => typeof v === 'number' ? Math.round(v) : typeof v).join(',')}) bbox ${b.join(',')}${edge}`); } return orig(L, ...args); }; }
+const only = new URLSearchParams(location.search).get('only');
+for (const t of ShopPack1.types) { if (only && !only.split(',').includes(t)) continue; out.push(t); current = t; try { ShopPack1.render(t, document.createElement('canvas')); } catch (e) { out.push('  ERR ' + e.message); } current = null; }
+document.getElementById('out').textContent = out.join('\n'); document.title = 'done';
+</script></body></html>
