@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{background:#121014;margin:0;padding:18px;font:600 12px Georgia,serif;color:#e6d8bd;width:1500px}
+h1{font-size:24px;margin:0 0 4px}p{margin:0 0 8px;color:#cdb98f;font-size:14px}h2{font-size:16px;color:#cdb98f;margin:10px 0 4px}
+.grid{display:grid;grid-template-columns:repeat(9,160px);gap:4px 6px}figure{margin:0;text-align:center}img{width:150px;height:150px;display:block;margin:0 auto}figcaption{min-height:14px}
+</style></head><body><h1 id="h">Armurerie — 81 icônes d’armes</h1><p id="s">Style A · Relique, sans fond. Dark medieval fantasy.</p><div id="root"></div>
+<script src="relief.js"></script><script src="helpers.js"></script><script src="stalls.js"></script><script src="props.js"></script><script src="weapons.js"></script><script src="armory.js"></script><script>
+const q = new URLSearchParams(location.search); const only = q.get('only'); const cats = q.get('cats'); const size = q.get('size');
+if (size) document.head.insertAdjacentHTML('beforeend', `<style>.grid{grid-template-columns:repeat(${q.get('cols') || 4},${+size + 10}px)}img{width:${size}px;height:${size}px}</style>`);
+if (q.get('title')) document.getElementById('h').textContent = q.get('title');
+const root = document.getElementById('root'); let cur = null, g = null; const errs = [];
+for (const name of Armory.ORDER) {
+  const w = Armory.W[name]; if (only && !only.split('|').includes(name)) continue; if (cats && !cats.split('|').includes(w.cat)) continue;
+  if (w.cat !== cur) { cur = w.cat; const h = document.createElement('h2'); h.textContent = cur; root.append(h); g = document.createElement('div'); g.className = 'grid'; root.append(g); }
+  const fig = document.createElement('figure'); let cv;
+  try { cv = Armory.render(name); } catch (e) { cv = document.createElement('canvas'); cv.width = cv.height = 512; errs.push(name + ': ' + e.message); }
+  const im = new Image(); im.src = cv.toDataURL(); im.width = im.height = +(size || 150); fig.append(im); const c = document.createElement('figcaption'); c.textContent = name; fig.append(c); g.append(fig);
+}
+if (errs.length) document.body.insertAdjacentHTML('beforeend', '<pre class="err">' + errs.join('\n') + '</pre>');
+document.title = 'done ' + Armory.ORDER.length;
+</script></body></html>

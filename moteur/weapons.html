@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{background:#121014;margin:0;padding:18px;font:600 14px Georgia,serif;color:#e6d8bd;width:1400px}
+h1{font-size:24px;margin:0 0 4px}p{margin:0 0 10px;color:#cdb98f}h2{font-size:17px;color:#cdb98f;margin:10px 0 6px}
+.row{display:grid;grid-template-columns:repeat(6,220px);gap:10px}figure{margin:0;text-align:center}canvas.big{width:210px;height:210px}
+.small{display:flex;gap:18px;align-items:flex-end}.small canvas{display:block}
+</style></head><body><h1>Icônes d’armes — brainstorm de direction artistique</h1><p>6 armes témoins, 3 présentations. Dernière ligne : taille réelle d’inventaire (64 et 96 px).</p><div id="root"></div>
+<script src="relief.js"></script><script src="helpers.js"></script><script src="stalls.js"></script><script src="props.js"></script><script src="weapons.js"></script><script>
+const root = document.getElementById('root'); const W = Object.keys(WeaponLab.WEAPONS); const cache = {};
+try {
+for (const sk of Object.keys(WeaponLab.STYLES)) {
+  const h = document.createElement('h2'); h.textContent = WeaponLab.STYLES[sk].name; root.append(h);
+  const row = document.createElement('div'); row.className = 'row'; root.append(row);
+  for (const wk of W) { const cv = WeaponLab.render(wk, sk); cv.className = 'big'; cache[sk + wk] = cv; const fig = document.createElement('figure'); fig.append(cv); const c = document.createElement('figcaption'); c.textContent = WeaponLab.WEAPONS[wk].name; fig.append(c); row.append(fig); }
+}
+const h = document.createElement('h2'); h.textContent = 'Taille réelle (A, B, C à 64 et 96 px)'; root.append(h);
+const sm = document.createElement('div'); sm.className = 'small'; root.append(sm);
+for (const sk of Object.keys(WeaponLab.STYLES)) for (const wk of W) for (const z of [64, 96]) { if (z === 96 && wk !== W[0] && wk !== W[2]) continue; const c = document.createElement('canvas'); c.width = c.height = z; c.getContext('2d').drawImage(cache[sk + wk], 0, 0, z, z); sm.append(c); }
+} catch (e) { document.body.insertAdjacentHTML('beforeend', '<pre class="err">' + e.stack + '</pre>'); }
+document.title = 'done';
+</script></body></html>

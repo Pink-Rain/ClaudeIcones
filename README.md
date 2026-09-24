@@ -15,6 +15,12 @@ Le Marché ambulant a la DA « étrange » (aubergine, laiton terni, symboles à
 flammes vertes, corbeau, boule de cristal). Il n'existe pas encore dans l'appli
 Eraser (7 types de boutique dans `lib/shop-schema.ts`) : à ajouter.
 
+## Icônes d'objets (`icones/`)
+- `icones/armes/` : 82 armes, PNG 512 × 512 fond transparent (style A « Relique », sans fond).
+  Planches : `planches/armurerie-1.png`, `planches/armurerie-2.png`.
+  Code : `moteur/armory.js` (+ `weapons.js`), aperçu `moteur/armory.html`
+  (`?only=Katana|Lance&size=300&cols=2`), export PNG : `moteur/export-armory.html`.
+
 ## Le moteur (`moteur/`)
 Tout tourne dans un navigateur, en canvas 512 × 512, sans dépendance.
 - `relief.js` : moteur de relief (albédo, hauteur, matière, lumières, ombres portées,
